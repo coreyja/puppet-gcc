@@ -68,7 +68,7 @@ class Gcc5 < Formula
 
   # Fix for libgccjit.so linkage on Darwin.
   # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64089
-  patch :DATA
+  # patch :DATA
 
   def install
     # GCC will suffer build errors if forced to use a particular linker.
@@ -197,17 +197,3 @@ class Gcc5 < Formula
     assert_equal "Hello, world!\n", `./hello-c`
   end
 end
-
-__END__
---- a/gcc/jit/Make-lang.in  2015-02-03 17:19:58.000000000 +0000
-+++ b/gcc/jit/Make-lang.in  2015-04-08 22:08:24.000000000 +0100
-@@ -85,8 +85,7 @@
-       $(jit_OBJS) libbackend.a libcommon-target.a libcommon.a \
-       $(CPPLIB) $(LIBDECNUMBER) $(LIBS) $(BACKENDLIBS) \
-       $(EXTRA_GCC_OBJS) \
--      -Wl,--version-script=$(srcdir)/jit/libgccjit.map \
--      -Wl,-soname,$(LIBGCCJIT_SONAME)
-+      -Wl,-install_name,$(LIBGCCJIT_SONAME)
-
- $(LIBGCCJIT_SONAME_SYMLINK): $(LIBGCCJIT_FILENAME)
-  ln -sf $(LIBGCCJIT_FILENAME) $(LIBGCCJIT_SONAME_SYMLINK)
