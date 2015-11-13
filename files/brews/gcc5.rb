@@ -21,24 +21,15 @@ class Gcc5 < Formula
 
   desc "The GNU Compiler Collection"
   homepage "https://gcc.gnu.org"
-  url "http://ftpmirror.gnu.org/gcc/gcc-5.1.0/gcc-5.1.0.tar.bz2"
-  mirror "https://ftp.gnu.org/gnu/gcc/gcc-5.1.0/gcc-5.1.0.tar.bz2"
-  sha256 "b7dafdf89cbb0e20333dbf5b5349319ae06e3d1a30bf3515b5488f7e89dca5ad"
+  url "http://ftpmirror.gnu.org/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/gcc/gcc-5.2.0/gcc-5.2.0.tar.bz2"
+  sha256 "5f835b04b5f7dd4f4d2dc96190ec1621b8d89f2dc6f638f9f8bc1b1014ba8cad"
 
   bottle do
-    root_url "https://homebrew.bintray.com/bottles-versions"
-    sha256 "33062848404942474e87d51bb3dfa389d557c7a9c76f89d46741d757b8a10bd5" => :yosemite
-    sha256 "d092279a7e0e069aacd09a63e4598593948400c4eb95b201912fbe08d242c4bc" => :mavericks
-    sha256 "5cc7eaaab1dd29879109ccf896f91c691ba6267a997288ee526e3f21479a8f02" => :mountain_lion
-  end
-
-  if MacOS.version >= :el_capitan
-    # Fixes build with Xcode 7.
-    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66523
-    patch do
-      url "https://gcc.gnu.org/bugzilla/attachment.cgi?id=35773"
-      sha256 "db4966ade190fff4ed39976be8d13e84839098711713eff1d08920d37a58f5ec"
-    end
+    revision 1
+    sha256 "09db748c41ee76dcb681ce809a23157d1e4ade3260ecb1395f8339faf8db25e9" => :el_capitan
+    sha256 "80a028bf71cbda7b25f53f307b8b706c26b5f0f2ddd4d2b21a48fa33e4c0d8a1" => :yosemite
+    sha256 "6c63eb8bdcbb06806a71bc91d89fa91ceb90154e93bb67bbdfb8bd6ed0ce9a67" => :mavericks
   end
 
   # GCC's Go compiler is not currently supported on Mac OS X.
@@ -75,7 +66,7 @@ class Gcc5 < Formula
   # GCC bootstraps itself, so it is OK to have an incompatible C++ stdlib
   cxxstdlib_check :skip
 
-  # Fix for libgccjit.so linkage on Darwin
+  # Fix for libgccjit.so linkage on Darwin.
   # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64089
   patch :DATA
 
@@ -206,16 +197,17 @@ class Gcc5 < Formula
     assert_equal "Hello, world!\n", `./hello-c`
   end
 end
+
 __END__
---- a/gcc/jit/Make-lang.in	2015-02-03 17:19:58.000000000 +0000
-+++ b/gcc/jit/Make-lang.in	2015-04-08 22:08:24.000000000 +0100
+--- a/gcc/jit/Make-lang.in  2015-02-03 17:19:58.000000000 +0000
++++ b/gcc/jit/Make-lang.in  2015-04-08 22:08:24.000000000 +0100
 @@ -85,8 +85,7 @@
-	     $(jit_OBJS) libbackend.a libcommon-target.a libcommon.a \
-	     $(CPPLIB) $(LIBDECNUMBER) $(LIBS) $(BACKENDLIBS) \
-	     $(EXTRA_GCC_OBJS) \
--	     -Wl,--version-script=$(srcdir)/jit/libgccjit.map \
--	     -Wl,-soname,$(LIBGCCJIT_SONAME)
-+	     -Wl,-install_name,$(LIBGCCJIT_SONAME)
+       $(jit_OBJS) libbackend.a libcommon-target.a libcommon.a \
+       $(CPPLIB) $(LIBDECNUMBER) $(LIBS) $(BACKENDLIBS) \
+       $(EXTRA_GCC_OBJS) \
+-      -Wl,--version-script=$(srcdir)/jit/libgccjit.map \
+-      -Wl,-soname,$(LIBGCCJIT_SONAME)
++      -Wl,-install_name,$(LIBGCCJIT_SONAME)
 
  $(LIBGCCJIT_SONAME_SYMLINK): $(LIBGCCJIT_FILENAME)
-	ln -sf $(LIBGCCJIT_FILENAME) $(LIBGCCJIT_SONAME_SYMLINK)
+  ln -sf $(LIBGCCJIT_FILENAME) $(LIBGCCJIT_SONAME_SYMLINK)
